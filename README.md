@@ -1,5 +1,8 @@
 ### 禁词管理
 
+
+### 同时需要[依赖](https://github.com/Kloping/Mirai_Plugins_Auto_Reply/releases/tag/lib-tts.0)
+
 命令列表
 
     /forbidden addMode <触发提示文本> <警告次数为0时则直接禁言> <禁言时长/分钟> <是否撤回true/false>   # 添加一个模式
