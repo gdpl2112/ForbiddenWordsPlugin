@@ -65,4 +65,14 @@ class CommandLine private constructor() : JCompositeCommand(ForbiddenWordsPlugin
     ) {
         sendMessage(Work.INSTANCE.addWord(c, id))
     }
+
+    @Description("切换开关状态")
+    @SubCommand("enable")
+    suspend fun CommandSender.forbiddenWordsPluginEnable(
+        @Name("gid") gid: Long,
+    ) {
+        sendMessage(Work.INSTANCE.enable(gid))
+    }
+
+
 }

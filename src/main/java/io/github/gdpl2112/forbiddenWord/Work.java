@@ -1,9 +1,11 @@
 package io.github.gdpl2112.forbiddenWord;
 
 import io.github.gdpl2112.database.e1.QueryWrapper;
+import io.github.gdpl2112.forbiddenWord.entity.Enables;
 import io.github.gdpl2112.forbiddenWord.entity.IllegalWord;
 import io.github.gdpl2112.forbiddenWord.entity.Mode;
 import io.github.gdpl2112.forbiddenWord.entity.Record;
+import io.github.gdpl2112.forbiddenWord.mapper.EnableMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.ModeMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.RecordMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.WordMapper;
@@ -26,6 +28,7 @@ public class Work {
     public ModeMapper modeMapper;
     public RecordMapper recordMapper;
     public WordMapper wordMapper;
+    public EnableMapper enableMapper;
     public static final String ADD_FAILED = "添加失败";
     public static final String S_NUM = "$num";
     public static final String S_MAX = "$max";
@@ -106,8 +109,35 @@ public class Work {
         return bot.getPermission().getLevel() > 0;
     }
 
+    @NotNull
+    public String enable(long gid) {
+        Enables enables = enableMapper.selectOneByKey(gid);
+        if (enables == null) {
+            enables = new Enables();
+            enables.setGid(gid);
+            enables.setK(true);
+            enableMapper.insert(enables);
+        } else {
+            enables.setK(!enables.getK());
+            enableMapper.updateById(enables);
+        }
+        return String.format("群'%s'的开关状态为'%s'", gid, enables.getK());
+    }
+
+    private synchronized boolean isEnable(long id) {
+        Enables enables = enableMapper.selectOneByKey(id);
+        if (enables == null) {
+            enables = new Enables();
+            enables.setGid(id);
+            enables.setK(true);
+            enableMapper.insert(enables);
+        }
+        return enables.getK();
+    }
+
     public void word(String text, GroupMessageEvent event) {
         long qid = event.getSender().getId();
+        if (!isEnable(event.getGroup().getId())) return;
         if (!hasAdmin(event.getGroup(), qid)) return;
         for (IllegalWord word : wordMapper.selectByWrapper(ALL)) {
             if (text.contains(word.getC()) || text.equals(word.getC())) {

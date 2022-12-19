@@ -2,6 +2,7 @@ package io.github.gdpl2112.forbiddenWord;
 
 import io.github.gdpl2112.database.KlopLocalityDataBase;
 import io.github.gdpl2112.database.KlopLocalityDataBaseProxy;
+import io.github.gdpl2112.forbiddenWord.mapper.EnableMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.ModeMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.RecordMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.WordMapper;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class ForbiddenWordsPlugin extends JavaPlugin {
     public ForbiddenWordsPlugin() {
         super(new JvmPluginDescriptionBuilder("io.github.gdpl2112.forbiddenWord.ForbiddenWordsPlugin",
-                "0.1")
+                "0.2")
                 .info("禁词撤回禁言").build());
     }
 
@@ -65,6 +66,7 @@ public class ForbiddenWordsPlugin extends JavaPlugin {
         Work.INSTANCE.recordMapper = KlopLocalityDataBaseProxy.INSTANCE.generate(RecordMapper.class);
         Work.INSTANCE.modeMapper = KlopLocalityDataBaseProxy.INSTANCE.generate(ModeMapper.class);
         Work.INSTANCE.wordMapper = KlopLocalityDataBaseProxy.INSTANCE.generate(WordMapper.class);
+        Work.INSTANCE.enableMapper = KlopLocalityDataBaseProxy.INSTANCE.generate(EnableMapper.class);
     }
 
     @Override
