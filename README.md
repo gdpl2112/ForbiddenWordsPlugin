@@ -9,5 +9,5 @@
     /forbidden listMode    # 列出所有模式
     /forbidden listWord    # 列出所有禁词
 
-![imgs/img.png](img.png)
-![imgs/img_1.png](img_1.png)
+![功能1](imgs/img.png)
+![功能1](imgs/img_1.png)
