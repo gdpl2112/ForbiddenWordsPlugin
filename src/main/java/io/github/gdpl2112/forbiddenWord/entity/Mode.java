@@ -24,6 +24,19 @@ public class Mode {
      * 是否撤回
      */
     private Boolean recall = true;
+    /**
+     * 是否重置记录
+     */
+    private Boolean reset = true;
+
+
+    public Boolean getReset() {
+        return reset;
+    }
+
+    public void setReset(Boolean reset) {
+        this.reset = reset;
+    }
 
     public Boolean getRecall() {
         return recall;

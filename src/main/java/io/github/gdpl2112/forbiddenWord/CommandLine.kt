@@ -21,8 +21,19 @@ class CommandLine private constructor() : JCompositeCommand(ForbiddenWordsPlugin
         @Name("警告次数为0时则直接禁言") n: Int,
         @Name("禁言时长/分钟") t: Int,
         @Name("是否撤回true/false") r: Boolean,
+        @Name("是否达上限后重置记录true/false") k: Boolean,
     ) {
-        sendMessage(Work.INSTANCE.addMode(tips, n, t,r))
+        sendMessage(Work.INSTANCE.addMode(tips, n, t, r, k))
+    }
+
+    @Description("添加一个模式")
+    @SubCommand("addMode")
+    suspend fun CommandSender.forbiddenWordsPluginAddMode1(
+        @Name("触发提示文本") tips: String,
+        @Name("警告次数为0时则直接禁言") n: Int,
+        @Name("禁言时长/分钟") t: Int
+    ) {
+        forbiddenWordsPluginAddMode(tips, n, t, r = true, k = true)
     }
 
     @Description("列出所有模式")

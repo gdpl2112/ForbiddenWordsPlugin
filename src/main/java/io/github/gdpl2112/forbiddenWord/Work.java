@@ -33,11 +33,12 @@ public class Work {
     public static final String S_NUM = "$num";
     public static final String S_MAX = "$max";
 
-    public String addMode(@NotNull String tips, int n, int t, boolean r) {
+    public String addMode(@NotNull String tips, int n, int t, boolean r, boolean k) {
         Mode mode = new Mode();
         mode.setTips(tips);
         mode.setN(n);
-        mode.setRecall(true);
+        mode.setRecall(r);
+        mode.setReset(k);
         Integer t1 = t * 60;
         mode.setT(t1);
         if (modeMapper.insert(mode) > 0) {
@@ -59,8 +60,8 @@ public class Work {
         String[] strings = new String[modes.size()];
         int r = 0;
         for (Mode mode : modes) {
-            strings[r++] = String.format("%s,'%s'警告%s次禁言%s分钟",
-                    mode.getId(), mode.getTips(), mode.getN(), mode.getT() / 60L);
+            strings[r++] = String.format("%s,'%s'警告%s次禁言%s分钟,撤回:%s,重置:%s",
+                    mode.getId(), mode.getTips(), mode.getN(), mode.getT() / 60L, mode.getRecall(), mode.getReset());
         }
         return strings;
     }
@@ -147,36 +148,49 @@ public class Work {
                 if (mode == null) continue;
                 if (mode.getRecall())
                     MessageSource.recall(event.getSource());
-                QueryWrapper qw = new QueryWrapper()
-                        .add("qid", qid)
-                        .add("wid", word.getId());
-                List<Record> records = recordMapper.selectByWrapper(qw);
-                Record record = null;
-                if (records == null || records.isEmpty()) {
-                    record = new Record();
-                    record.setQid(qid);
-                    record.setWid(word.getId());
-                    record.setNum(1);
-                    recordMapper.insert(record);
-                } else {
-                    record = records.get(0);
-                    record.setNum(record.getNum() + 1);
-                    recordMapper.updateById(record);
-                }
-                if (record.getNum() >= mode.getN()) {
+                if (mode.getN() <= 1) {
                     for (NormalMember member : event.getGroup().getMembers()) {
                         if (member.getId() == event.getSender().getId()) {
                             member.mute(mode.getT().intValue());
                         }
                     }
-                    recordMapper.deleteById(record.getId());
+                    MessageChainBuilder builder = new MessageChainBuilder();
+                    builder.append(new At(qid)).append("\n")
+                            .append(mode.getTips()
+                                    .replace(S_MAX, mode.getN().toString()));
+                    event.getGroup().sendMessage(builder.build());
+                } else {
+                    QueryWrapper qw = new QueryWrapper()
+                            .add("qid", qid)
+                            .add("wid", word.getId());
+                    List<Record> records = recordMapper.selectByWrapper(qw);
+                    Record record = null;
+                    if (records == null || records.isEmpty()) {
+                        record = new Record();
+                        record.setQid(qid);
+                        record.setWid(word.getId());
+                        record.setNum(1);
+                        recordMapper.insert(record);
+                    } else {
+                        record = records.get(0);
+                        record.setNum(record.getNum() + 1);
+                        recordMapper.updateById(record);
+                    }
+                    if (record.getNum() >= mode.getN()) {
+                        for (NormalMember member : event.getGroup().getMembers()) {
+                            if (member.getId() == event.getSender().getId()) {
+                                member.mute(mode.getT().intValue());
+                            }
+                        }
+                        recordMapper.deleteById(record.getId());
+                    }
+                    MessageChainBuilder builder = new MessageChainBuilder();
+                    builder.append(new At(qid)).append("\n")
+                            .append(mode.getTips()
+                                    .replace(S_NUM, record.getNum().toString())
+                                    .replace(S_MAX, mode.getN().toString()));
+                    event.getGroup().sendMessage(builder.build());
                 }
-                MessageChainBuilder builder = new MessageChainBuilder();
-                builder.append(new At(qid)).append("\n")
-                        .append(mode.getTips()
-                                .replace(S_NUM, record.getNum().toString())
-                                .replace(S_MAX, mode.getN().toString()));
-                event.getGroup().sendMessage(builder.build());
             }
         }
     }

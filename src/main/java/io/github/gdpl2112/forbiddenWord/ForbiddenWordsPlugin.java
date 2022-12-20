@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class ForbiddenWordsPlugin extends JavaPlugin {
     public ForbiddenWordsPlugin() {
         super(new JvmPluginDescriptionBuilder("io.github.gdpl2112.forbiddenWord.ForbiddenWordsPlugin",
-                "0.2.1")
+                "0.2.3")
                 .info("禁词撤回禁言").build());
     }
 
@@ -44,7 +44,7 @@ public class ForbiddenWordsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
-        config = FileInitializeValue.getValue(PATH, config);
+        config = FileInitializeValue.getValue(PATH, config, true);
         KlopLocalityDataBase.INSTANCE = new KlopLocalityDataBase();
         KlopLocalityDataBase.INSTANCE.setDataFile(config.getDatabase());
         KlopLocalityDataBase.INSTANCE.reload();
