@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class ForbiddenWordsPlugin extends JavaPlugin {
     public ForbiddenWordsPlugin() {
         super(new JvmPluginDescriptionBuilder("io.github.gdpl2112.forbiddenWord.ForbiddenWordsPlugin",
-                "0.2")
+                "0.2.1")
                 .info("禁词撤回禁言").build());
     }
 

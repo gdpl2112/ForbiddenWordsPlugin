@@ -55,6 +55,7 @@ public class Work {
     @NotNull
     public String[] listModes() {
         List<Mode> modes = modeMapper.selectByWrapper(ALL);
+        if (modes.isEmpty()) return new String[]{"空!"};
         String[] strings = new String[modes.size()];
         int r = 0;
         for (Mode mode : modes) {
@@ -90,6 +91,7 @@ public class Work {
     @NotNull
     public String[] listWords() {
         List<IllegalWord> words = wordMapper.selectByWrapper(ALL);
+        if (words.isEmpty()) return new String[]{"空!"};
         String[] strings = new String[words.size()];
         int r = 0;
         for (IllegalWord word : words) {
