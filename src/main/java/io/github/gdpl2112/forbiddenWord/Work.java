@@ -182,7 +182,8 @@ public class Work {
                                 member.mute(mode.getT().intValue());
                             }
                         }
-                        recordMapper.deleteById(record.getId());
+                        if (mode.getReset())
+                            recordMapper.deleteById(record.getId());
                     }
                     MessageChainBuilder builder = new MessageChainBuilder();
                     builder.append(new At(qid)).append("\n")
