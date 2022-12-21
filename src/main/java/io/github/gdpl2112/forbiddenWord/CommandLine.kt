@@ -85,5 +85,9 @@ class CommandLine private constructor() : JCompositeCommand(ForbiddenWordsPlugin
         sendMessage(Work.INSTANCE.enable(gid))
     }
 
-
+    @Description("重载配置")
+    @SubCommand("reload")
+    suspend fun CommandSender.forbiddenWordsPluginReload() {
+        sendMessage(Work.INSTANCE.reload())
+    }
 }

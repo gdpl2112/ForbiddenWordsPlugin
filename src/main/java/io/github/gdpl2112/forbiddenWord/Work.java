@@ -9,6 +9,7 @@ import io.github.gdpl2112.forbiddenWord.mapper.EnableMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.ModeMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.RecordMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.WordMapper;
+import io.github.kloping.initialize.FileInitializeValue;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -102,7 +103,7 @@ public class Work {
         return strings;
     }
 
-    private boolean hasAdmin(Group group, long id) {
+    public boolean hasAdmin(Group group, long id) {
         NormalMember bot = group.getBotAsMember();
         for (NormalMember m1 : group.getMembers()) {
             if (m1.getId() == id) {
@@ -127,7 +128,7 @@ public class Work {
         return String.format("群'%s'的开关状态为'%s'", gid, enables.getK());
     }
 
-    private synchronized boolean isEnable(long id) {
+    public synchronized boolean isEnable(long id) {
         Enables enables = enableMapper.selectOneByKey(id);
         if (enables == null) {
             enables = new Enables();
@@ -140,10 +141,8 @@ public class Work {
 
     public void word(String text, GroupMessageEvent event) {
         long qid = event.getSender().getId();
-        if (!isEnable(event.getGroup().getId())) return;
-        if (!hasAdmin(event.getGroup(), qid)) return;
         for (IllegalWord word : wordMapper.selectByWrapper(ALL)) {
-            if (text.contains(word.getC()) || text.equals(word.getC())) {
+            if (text.contains(word.getC().toLowerCase()) || text.equals(word.getC().toLowerCase())) {
                 Mode mode = modeMapper.selectOneById(word.getMode());
                 if (mode == null) continue;
                 if (mode.getRecall())
@@ -194,5 +193,13 @@ public class Work {
                 }
             }
         }
+    }
+
+    @NotNull
+    public String reload() {
+        ForbiddenWordsPlugin.config =
+                FileInitializeValue.getValue(ForbiddenWordsPlugin.PATH,
+                        ForbiddenWordsPlugin.config, true);
+        return "ok";
     }
 }

@@ -29,7 +29,6 @@ public class Mode {
      */
     private Boolean reset = true;
 
-
     public Boolean getReset() {
         return reset;
     }
