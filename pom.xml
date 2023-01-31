@@ -10,7 +10,7 @@
     <version>1.0</version>
 
     <properties>
-        <mirai-version>2.12.3</mirai-version>
+        <mirai-version>2.13.4</mirai-version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>

@@ -1,6 +1,7 @@
 package io.github.gdpl2112.forbiddenWord;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.github.gdpl2112.database.KlopLocalityDataBase;
 import io.github.gdpl2112.database.KlopLocalityDataBaseProxy;
@@ -9,7 +10,6 @@ import io.github.gdpl2112.forbiddenWord.mapper.ModeMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.RecordMapper;
 import io.github.gdpl2112.forbiddenWord.mapper.WordMapper;
 import io.github.kloping.initialize.FileInitializeValue;
-import io.github.kloping.url.UrlUtils;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.console.command.CommandManager;
 import net.mamoe.mirai.console.extension.PluginComponentStorage;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
@@ -32,9 +31,7 @@ import java.io.IOException;
  */
 public class ForbiddenWordsPlugin extends JavaPlugin {
     public ForbiddenWordsPlugin() {
-        super(new JvmPluginDescriptionBuilder("io.github.gdpl2112.forbiddenWord.ForbiddenWordsPlugin",
-                "0.3")
-                .info("禁词撤回禁言").build());
+        super(new JvmPluginDescriptionBuilder("io.github.gdpl2112.forbiddenWord.ForbiddenWordsPlugin", "0.4").info("禁词撤回禁言").build());
     }
 
     public static final ForbiddenWordsPlugin INSTANCE = new ForbiddenWordsPlugin();
@@ -105,21 +102,17 @@ public class ForbiddenWordsPlugin extends JavaPlugin {
 
     public static final String getTextFromPic(String url) {
         try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(UrlUtils.getBytesFromHttpUrl(url));
-            Connection connection = Jsoup.connect("http://www.iinside.cn:7001/api_req")
-                    .method(Connection.Method.POST)
-                    .ignoreHttpErrors(true).ignoreContentType(true)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
-                    .data("image_ocr_pp", "wx.png", bais)
-                    .data("password", "8907")
-                    .data("reqmode", "ocr_pp");
+            Connection connection = Jsoup.connect("https://api.wer.plus/api/yocr").method(Connection.Method.POST).ignoreHttpErrors(true).ignoreContentType(true).userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54").requestBody("{\"data\":\"" + url + "\"}");
             Connection.Response response = connection.execute();
             String json = response.body();
             JSONObject jo = JSON.parseObject(json);
-            if (!jo.containsKey("data")) return "";
+            JSONObject data = jo.getJSONObject("data");
+            if (!data.containsKey("comment")) return "未能识别出出文字!";
+            JSONArray comment = data.getJSONArray("comment");
             StringBuilder sb = new StringBuilder();
-            for (Object o : jo.getJSONArray("data")) {
-                sb.append(o).append("\n");
+            for (Object oe : comment) {
+                JSONArray e = (JSONArray) oe;
+                sb.append("").append(e.get(1).toString());
             }
             return sb.toString().trim();
         } catch (IOException e) {
