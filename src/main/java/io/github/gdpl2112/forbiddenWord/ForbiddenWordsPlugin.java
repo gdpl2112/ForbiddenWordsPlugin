@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 public class ForbiddenWordsPlugin extends JavaPlugin {
     public ForbiddenWordsPlugin() {
-        super(new JvmPluginDescriptionBuilder("io.github.gdpl2112.forbiddenWord.ForbiddenWordsPlugin", "0.4").info("禁词撤回禁言").build());
+        super(new JvmPluginDescriptionBuilder("io.github.gdpl2112.forbiddenWord.ForbiddenWordsPlugin", "0.4.1").info("禁词撤回禁言").build());
     }
 
     public static final ForbiddenWordsPlugin INSTANCE = new ForbiddenWordsPlugin();
